@@ -91,7 +91,7 @@ class DGaffML
         elsif value.length == 13 and value.scan(/\d/).count == 13
           return Time.at(value).to_i
         else
-          return Time.parse(value).to_i
+          return Chronic.parse(value).to_i
         end
       elsif directive == "Text" or directive == "Phrase"
         return clean_str(value).split(" ").collect{|word| Stemmer::stem_word(word)}

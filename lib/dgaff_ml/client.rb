@@ -1,3 +1,4 @@
+require 'chronic'
 require 'json'
 require 'rest-client'
 require 'fast-stemmer'
