@@ -9,11 +9,16 @@ class DGaffML
     end
     
     def predict(obs)
-      @client.predict(@dataset_id, translate_obs(obs))
+      predictions = @client.predict(@dataset_id, translate_obs(obs))
+      if self.model["conversion_pipeline"].keys.include?("label")
+        return predictions.collect{|x| self.model["conversion_pipeline"]["label"][x]}
+      else
+        return predictions
+      end
     end
     
     def translate_obs(obs)
-      model_keys = self.model["conversion_pipeline"].keys.sort_by(&:to_i)
+      model_keys = (self.model["conversion_pipeline"].keys-["label"]).sort_by(&:to_i)
       model_classes = model_keys.collect{|k| self.model["col_classes"][k.to_i]}
       translated_rows = []
       obs.each do |row|
@@ -47,7 +52,13 @@ class DGaffML
           end
           detexted << counted
         else
-          detexted << col.collect{|r| r||self.model["conversion_pipeline"][model_keys[i]]["average"]}
+          conversion_pipeline = self.model["conversion_pipeline"][model_keys[i]]
+          replaced = col.collect{|r| r||conversion_pipeline["average"]}
+          dist = conversion_pipeline["max"]-conversion_pipeline["min"]
+          detexted << replaced
+          detexted << replaced.collect{|r| (r-conversion_pipeline["min"]).to_f/dist} if dist > 0
+          detexted << replaced.collect{|r| (r-conversion_pipeline["average"]).to_f/conversion_pipeline["stdev"]} if conversion_pipeline["stdev"] > 0
+          detexted << replaced.collect{|r| r.abs}
         end
       end
       return detexted.transpose
