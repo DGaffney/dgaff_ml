@@ -18,7 +18,7 @@ class DGaffML
     end
     
     def translate_obs(obs)
-      model_keys = (self.model["conversion_pipeline"].keys-["label"]).sort_by(&:to_i)
+      model_keys = (self.model["conversion_pipeline"].keys-["label", "internal_headers"]).sort_by(&:to_i)
       model_classes = model_keys.collect{|k| self.model["col_classes"][k.to_i]}
       translated_rows = []
       obs.each do |row|
