@@ -7,17 +7,37 @@ class DGaffML
     def initialize(user_id)
       @user = DGaffML::Request.login(user_id)
     end
-    
-    def models
-      DGaffML::Request.datasets(@user["id"])
+
+    def datasets
+      DGaffML::Request.datasets(@user["id"]).collect{|d| DGaffML::Dataset.new(self, d)}
     end
 
-    def model(dataset_id)
-      DGaffML::Model.new(self, DGaffML::Request.dataset(@user["id"], dataset_id))
+    def dataset(dataset_id)
+      DGaffML::Dataset.new(self, DGaffML::Request.dataset(@user["id"], dataset_id))
     end
-    
+
+    def export_model(dataset_id)
+      DGaffML::Request.export_model(@user["id"], dataset_id)
+    end
+
+    def models
+      DGaffML::Request.models(@user["id"]).collect{|m| DGaffML::Model.new(self, m)}
+    end
+
+    def model(model_id)
+      DGaffML::Model.new(self, DGaffML::Request.model(@user["id"], model_id))
+    end
+
     def predict(dataset_id, obs)
       DGaffML::Request.predict(@user["id"], dataset_id, obs)
+    end
+    
+    def apply_to_new_dataset(model_id, filepath, prediction_column)
+      DGaffML::Request.apply_to_new_dataset(@user["id"], model_id, filepath, prediction_column)
+    end
+    
+    def new_dataset(filepath, prediction_column)
+      DGaffML::Request.new_dataset(@user["id"], filepath, prediction_column)
     end
   end
 end
