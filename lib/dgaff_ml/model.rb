@@ -11,6 +11,5 @@ class DGaffML
     def apply_to_new_dataset(filepath, prediction_column)
       @client.apply_to_new_dataset(@model_id, filepath, prediction_column)
     end
-    
   end
 end

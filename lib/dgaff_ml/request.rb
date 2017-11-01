@@ -9,7 +9,7 @@ class DGaffML
     end
     
     def self.new_dataset(user_id, filepath, prediction_column)
-      JSON.parse(RestClient.post(hostname+"/api/#{user_id}/new_dataset", {csv_data: CSV.read(filepath), prediction_column: prediction_column}).body)
+      JSON.parse(RestClient.post(hostname+"/api/#{user_id}/new_dataset", {filesize: File.open(filepath).size/1024.0/1024, filename: filepath.split("/").last, csv_data: CSV.read(filepath).to_json, prediction_column: prediction_column}).body)
     end
 
     def self.dataset(user_id, dataset_id)
@@ -33,7 +33,6 @@ class DGaffML
     end
 
     def self.apply_to_new_dataset(user_id, model_id, filepath, prediction_column)
-    binding.pry
       JSON.parse(RestClient.post(hostname+"/api/#{user_id}/model/#{model_id}/apply_to_new_dataset", {filesize: File.open(filepath).size/1024.0/1024, filename: filepath.split("/").last, csv_data: CSV.read(filepath).to_json, prediction_column: prediction_column}).body)
     end
 

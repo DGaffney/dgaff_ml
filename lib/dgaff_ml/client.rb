@@ -17,7 +17,7 @@ class DGaffML
     end
 
     def export_model(dataset_id)
-      DGaffML::Request.export_model(@user["id"], dataset_id)
+      DGaffML::Model.new(self, DGaffML::Request.export_model(@user["id"], dataset_id))
     end
 
     def models
@@ -33,11 +33,11 @@ class DGaffML
     end
     
     def apply_to_new_dataset(model_id, filepath, prediction_column)
-      DGaffML::Request.apply_to_new_dataset(@user["id"], model_id, filepath, prediction_column)
+      DGaffML::Dataset.new(self, DGaffML::Request.apply_to_new_dataset(@user["id"], model_id, filepath, prediction_column))
     end
     
     def new_dataset(filepath, prediction_column)
-      DGaffML::Request.new_dataset(@user["id"], filepath, prediction_column)
+      DGaffML::Dataset.new(self,DGaffML::Request.new_dataset(@user["id"], filepath, prediction_column))
     end
   end
 end
